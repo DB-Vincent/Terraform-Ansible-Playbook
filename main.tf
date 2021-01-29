@@ -29,21 +29,6 @@ resource "aws_instance" "server1" {
     instance_type       = "t2.micro"
     key_name            = var.keypair_name
 
-    // Execute `apt update` and install nginx.
-    provisioner "remote-exec" {
-        inline = [
-            "sudo apt update",
-            "sudo apt install nginx -y",
-        ]
-    }
-
-    connection {
-        type        = "ssh"
-        user        = "ubuntu"
-        private_key = file(var.private_key)
-        host        = self.public_ip
-    }
-
     tags = {
         Name = "Server1"
     }
