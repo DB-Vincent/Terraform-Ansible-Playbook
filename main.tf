@@ -21,13 +21,50 @@ resource "aws_key_pair" "keypair" {
 }
 
 /*
+ * Create the Security Group to allow HTTP and SSH traffic
+ */
+resource "aws_security_group" "sg-ec2" {
+    name        = "TutorialSG"
+
+    ingress {
+        description = "HTTP from everywhere"
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        description = "SSH from everywhere"
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    tags = {
+        Name = "TutorialSG"
+    }
+}
+
+/*
  * Create AWS instance
  */
 resource "aws_instance" "server1" {
+    depends_on = [ aws_security_group.sg-ec2 ]
     count               = 1
     ami                 = "ami-0aef57767f5404a3c" // Ubuntu 20.04
     instance_type       = "t2.micro"
     key_name            = var.keypair_name
+
+    security_groups = [aws_security_group.sg-ec2.name]
 
     tags = {
         Name = "Server1"
