@@ -21,7 +21,7 @@ resource "aws_key_pair" "keypair" {
 }
 
 /*
- * Create Subnet 1 AWS instances
+ * Create AWS instance
  */
 resource "aws_instance" "server1" {
     count               = 1
