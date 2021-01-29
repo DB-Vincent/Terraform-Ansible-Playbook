@@ -57,9 +57,8 @@ resource "aws_security_group" "sg-ec2" {
 /*
  * Create AWS instance
  */
-resource "aws_instance" "server1" {
-    depends_on = [ aws_security_group.sg-ec2 ]
-    count               = 1
+resource "aws_instance" "servers" {
+    count               = 3
     ami                 = "ami-0aef57767f5404a3c" // Ubuntu 20.04
     instance_type       = "t2.micro"
     key_name            = var.keypair_name
@@ -70,3 +69,16 @@ resource "aws_instance" "server1" {
         Name = "Server1"
     }
 }
+
+data "template_file" "hosts" {
+    template = file("./hosts.tpl")
+    vars = {
+        instance_name = join("\n", aws_instance.servers.*.public_ip)
+    }
+}
+
+resource "local_file" "hosts_file" {
+  content  = data.template_file.hosts.rendered
+  filename = "./hosts"
+}
+
