@@ -81,3 +81,7 @@ resource "local_file" "hosts_file" {
   content  = data.template_file.hosts.rendered
   filename = "./ansible/hosts"
 }
+
+output "public_ips" {
+    value = aws_instance.servers.*.public_ip
+}
