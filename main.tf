@@ -58,7 +58,7 @@ resource "aws_security_group" "sg-ec2" {
  * Create AWS instance
  */
 resource "aws_instance" "servers" {
-    count               = 1
+    count               = 3
     ami                 = "ami-0aef57767f5404a3c" // Ubuntu 20.04
     instance_type       = "t2.micro"
     key_name            = var.keypair_name
@@ -73,7 +73,7 @@ resource "aws_instance" "servers" {
 data "template_file" "hosts" {
     template = file("./hosts.tpl")
     vars = {
-        instance_name = join("\n", aws_instance.servers.*.public_ip)
+        instance_name = join(" ansible_user=ubuntu ansible_ssh_private_key_file=./ssh-key ansible_ssh_common_args='-o StrictHostKeyChecking=no'\n", aws_instance.servers.*.public_ip)
     }
 }
 
@@ -81,4 +81,3 @@ resource "local_file" "hosts_file" {
   content  = data.template_file.hosts.rendered
   filename = "./ansible/hosts"
 }
-
