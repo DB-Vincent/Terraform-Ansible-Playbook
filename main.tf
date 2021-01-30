@@ -58,7 +58,7 @@ resource "aws_security_group" "sg-ec2" {
  * Create AWS instance
  */
 resource "aws_instance" "servers" {
-    count               = 3
+    count               = 1
     ami                 = "ami-0aef57767f5404a3c" // Ubuntu 20.04
     instance_type       = "t2.micro"
     key_name            = var.keypair_name
@@ -66,7 +66,7 @@ resource "aws_instance" "servers" {
     security_groups = [aws_security_group.sg-ec2.name]
 
     tags = {
-        Name = "Server1"
+        Name = "Server${count.index}"
     }
 }
 
