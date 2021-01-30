@@ -79,6 +79,6 @@ data "template_file" "hosts" {
 
 resource "local_file" "hosts_file" {
   content  = data.template_file.hosts.rendered
-  filename = "./hosts"
+  filename = "./ansible/hosts"
 }
 
